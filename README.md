@@ -1,4 +1,4 @@
-# 🚨 UNMAINTAINED 🚨 
+# 🚨 UNMAINTAINED 🚨
 
 This project is no longer used by LinkedIn and is currently unmaintained.
 
@@ -9,7 +9,7 @@ Hopscotch [![Build Status](https://api.travis-ci.org/linkedin/hopscotch.png)](ht
 =========
 Hopscotch is a framework to make it easy for developers to add product tours to their pages. Hopscotch accepts a tour JSON object as input and provides an API for the developer to control rendering the tour display and managing the tour progress.
 
-To learn more about Hopscotch and the API, check out [linkedin.github.io/hopscotch](http://linkedin.github.io/hopscotch/).
+To learn more about Hopscotch and the API, check out [linkedinattic.github.io/hopscotch](http://linkedinattic.github.io/hopscotch/).
 
 ![Example Hopscotch tour](/demo/img/screenshot.png)
 
@@ -25,7 +25,7 @@ How do I get started with Hopscotch?
 ------------------------------------
 The Hopscotch files included in `/dist` is a good starting point for working with Hopscotch. Out of the box, Hopscotch includes the core JavaScript for running and interacting with tours, a default template for rendering bubbles, and a default CSS file to provide a basic look and feel for your tours. To get started, simply include these files on your page, then use the Hopscotch API to start a tour. While Hopscotch will use YUI or jQuery if they're present, they're not required.
 
-Check out [linkedin.github.io/hopscotch](http://linkedin.github.io/hopscotch/) for usage examples and a live sample tour. If you'd like to tweak some of the default assets included with Hopscotch to best suit your project's needs, read on for details about how to modify and rebuild a custom version of Hopscotch.
+Check out [linkedinattic.github.io/hopscotch](http://linkedinattic.github.io/hopscotch/) for usage examples and a live sample tour. If you'd like to tweak some of the default assets included with Hopscotch to best suit your project's needs, read on for details about how to modify and rebuild a custom version of Hopscotch.
 
 How do I build Hopscotch?
 -------------------------
@@ -43,7 +43,7 @@ Depending on your use case, you might want to modify and/or rebuild some of the 
 
 - CSS tweaks: The Hopscotch stylesheet is written in and compiled using [LESS](http://lesscss.org/). If you make changes to your local copy of these stylesheets, they'll be recompiled when building Hopscotch.
 - Bubble markup: The internal markup for Hopscotch bubbles are rendered using templates. See the README.md file in `/src/tl` for details. Any templates in `/src/tl` will be compiled into JavaScript using JST when building Hopscotch and included at the bottom of Hopscotch.js.
-- Callbacks & Page Interactivity: See [linkedin.github.io/hopscotch](http://linkedin.github.io/hopscotch/) for details about the Hopscotch API and what tour/callout events you can register events with. Use callbacks to integrate Hopscotch with other libraries and/or presentational elements you might have on your page.
+- Callbacks & Page Interactivity: See [linkedinattic.github.io/hopscotch](http://linkedinattic.github.io/hopscotch/) for details about the Hopscotch API and what tour/callout events you can register events with. Use callbacks to integrate Hopscotch with other libraries and/or presentational elements you might have on your page.
 
 I want to contribute! How can I help?
 -------------------------------------
