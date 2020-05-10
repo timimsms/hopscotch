@@ -1,4 +1,4 @@
-Hopscotch [![Build Status](https://api.travis-ci.org/linkedin/hopscotch.png)](http://travis-ci.org/linkedin/hopscotch)
+Hopscotch [![Build Status](https://travis-ci.com/timimsms/hopscotch.svg?branch=master)](https://travis-ci.com/timimsms/hopscotch)
 =========
 Hopscotch is a framework to make it easy for developers to add product tours to their pages. Hopscotch accepts a tour JSON object as input and provides an API for the developer to control rendering the tour display and managing the tour progress.
 
