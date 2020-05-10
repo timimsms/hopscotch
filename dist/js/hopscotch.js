@@ -17,7 +17,7 @@
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
   typeof define === 'function' && define.amd ? define(factory) :
-  (global.hopscotch = factory());
+  (global = global || self, global.hopscotch = factory());
 }(this, (function () { 'use strict';
 
   var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
@@ -28,28 +28,29 @@
 
   /* global document */
 
-  var Hopscotch;
-  var HopscotchBubble;
-  var HopscotchCalloutManager;
-  var HopscotchI18N;
-  var customI18N;
-  var customRenderer;
-  var customEscape;
-  var templateToUse = 'bubble_default';
-  var Sizzle = window.Sizzle || null;
-  var utils;
-  var callbacks;
-  var helpers;
-  var winLoadHandler;
-  var defaultOpts;
-  var winHopscotch;
-  var undefinedStr = 'undefined';
-  var waitingToStart = false;
-  var hasJquery = (typeof jQuery === 'undefined' ? 'undefined' : _typeof(jQuery)) !== undefinedStr;
-  var hasSessionStorage = false;
-  var isStorageWritable = false;
-  var validIdRegEx = /^[a-zA-Z]+[a-zA-Z0-9_-]*$/;
-  var rtlMatches = {
+  var Hopscotch,
+      HopscotchBubble,
+      HopscotchCalloutManager,
+      HopscotchI18N,
+      customI18N,
+      customRenderer,
+      templateToUse = 'bubble_default',
+      Sizzle = window.Sizzle || null,
+      utils,
+      callbacks,
+      helpers,
+      winLoadHandler,
+      defaultOpts,
+      winHopscotch,
+      undefinedStr = 'undefined',
+      waitingToStart = false,
+      // is a tour waiting for the document to finish
+  // loading so that it can start?
+  hasJquery = (typeof jQuery === 'undefined' ? 'undefined' : _typeof(jQuery)) !== undefinedStr,
+      hasSessionStorage = false,
+      isStorageWritable = false,
+      validIdRegEx = /^[a-zA-Z]+[a-zA-Z0-9_-]*$/,
+      rtlMatches = {
     left: 'right',
     right: 'left'
   };
@@ -117,7 +118,7 @@
      * @private
      */
     addClass: function addClass(domEl, classToAdd) {
-      var domClasses, classToAddArr, setClass, i, len;
+      var domClasses, classToAddArr, i, len;
 
       if (!domEl.className) {
         domEl.className = classToAdd;
@@ -141,7 +142,7 @@
      * @private
      */
     removeClass: function removeClass(domEl, classToRemove) {
-      var domClasses, classToRemoveArr, currClass, i, len;
+      var domClasses, classToRemoveArr, i, len;
 
       classToRemoveArr = classToRemove.split(/\s+/);
       domClasses = ' ' + domEl.className + ' ';
@@ -255,8 +256,6 @@
      */
     invokeEventCallbacks: function invokeEventCallbacks(evtType, stepCb) {
       var cbArr = callbacks[evtType],
-          callback,
-          fn,
           i,
           len;
 
@@ -1057,10 +1056,6 @@
           // for updating after window resize
       onWinResize,
           _appendToBody2,
-          children,
-          numChildren,
-          node,
-          i,
           currTour,
           opt;
 
@@ -1431,7 +1426,6 @@
           yuiEase,
           direction,
           scrollIncr,
-          scrollTimeout,
           _scrollTimeoutFn;
 
       // Target and bubble are both visible in viewport
@@ -2252,7 +2246,6 @@
       var bubble,
           events = ['next', 'prev', 'start', 'end', 'show', 'error', 'close'],
           eventPropName,
-          callbackProp,
           i,
           len;
 
@@ -2400,9 +2393,6 @@
      * @returns {Object} The Hopscotch object (for chaining).
      */
     this.setEscaper = function (esc) {
-      if (typeof esc === 'function') {
-        customEscape = esc;
-      }
       return this;
     };
 
