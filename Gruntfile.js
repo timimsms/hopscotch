@@ -292,6 +292,7 @@ module.exports = function(grunt) {
         dest: 'tmp/js/hopscotch_umd_tmp.js',
         options: {
           format: 'umd',
+          name: 'hopscotch',
           moduleName: HOPSCOTCH
         },
         src: 'src/js/hopscotch.js'
