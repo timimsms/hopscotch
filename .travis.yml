@@ -7,3 +7,4 @@ notifications:
     - tim@mims.ms
 before_install:
   - npm install -g grunt-cli
+  - npm install -g rollup
