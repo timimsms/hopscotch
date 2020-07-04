@@ -17,7 +17,7 @@
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
   typeof define === 'function' && define.amd ? define(factory) :
-  (global = global || self, global.hopscotch = factory());
+  (global.hopscotch = factory());
 }(this, (function () { 'use strict';
 
   var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
@@ -26,31 +26,146 @@
     return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
   };
 
+
+
+
+
+  var asyncGenerator = function () {
+    function AwaitValue(value) {
+      this.value = value;
+    }
+
+    function AsyncGenerator(gen) {
+      var front, back;
+
+      function send(key, arg) {
+        return new Promise(function (resolve, reject) {
+          var request = {
+            key: key,
+            arg: arg,
+            resolve: resolve,
+            reject: reject,
+            next: null
+          };
+
+          if (back) {
+            back = back.next = request;
+          } else {
+            front = back = request;
+            resume(key, arg);
+          }
+        });
+      }
+
+      function resume(key, arg) {
+        try {
+          var result = gen[key](arg);
+          var value = result.value;
+
+          if (value instanceof AwaitValue) {
+            Promise.resolve(value.value).then(function (arg) {
+              resume("next", arg);
+            }, function (arg) {
+              resume("throw", arg);
+            });
+          } else {
+            settle(result.done ? "return" : "normal", result.value);
+          }
+        } catch (err) {
+          settle("throw", err);
+        }
+      }
+
+      function settle(type, value) {
+        switch (type) {
+          case "return":
+            front.resolve({
+              value: value,
+              done: true
+            });
+            break;
+
+          case "throw":
+            front.reject(value);
+            break;
+
+          default:
+            front.resolve({
+              value: value,
+              done: false
+            });
+            break;
+        }
+
+        front = front.next;
+
+        if (front) {
+          resume(front.key, front.arg);
+        } else {
+          back = null;
+        }
+      }
+
+      this._invoke = send;
+
+      if (typeof gen.return !== "function") {
+        this.return = undefined;
+      }
+    }
+
+    if (typeof Symbol === "function" && Symbol.asyncIterator) {
+      AsyncGenerator.prototype[Symbol.asyncIterator] = function () {
+        return this;
+      };
+    }
+
+    AsyncGenerator.prototype.next = function (arg) {
+      return this._invoke("next", arg);
+    };
+
+    AsyncGenerator.prototype.throw = function (arg) {
+      return this._invoke("throw", arg);
+    };
+
+    AsyncGenerator.prototype.return = function (arg) {
+      return this._invoke("return", arg);
+    };
+
+    return {
+      wrap: function (fn) {
+        return function () {
+          return new AsyncGenerator(fn.apply(this, arguments));
+        };
+      },
+      await: function (value) {
+        return new AwaitValue(value);
+      }
+    };
+  }();
+
   /* global document */
 
-  var Hopscotch,
-      HopscotchBubble,
-      HopscotchCalloutManager,
-      HopscotchI18N,
-      customI18N,
-      customRenderer,
-      templateToUse = 'bubble_default',
-      Sizzle = window.Sizzle || null,
-      utils,
-      callbacks,
-      helpers,
-      winLoadHandler,
-      defaultOpts,
-      winHopscotch,
-      undefinedStr = 'undefined',
-      waitingToStart = false,
-      // is a tour waiting for the document to finish
-  // loading so that it can start?
-  hasJquery = (typeof jQuery === 'undefined' ? 'undefined' : _typeof(jQuery)) !== undefinedStr,
-      hasSessionStorage = false,
-      isStorageWritable = false,
-      validIdRegEx = /^[a-zA-Z]+[a-zA-Z0-9_-]*$/,
-      rtlMatches = {
+  var Hopscotch;
+  var HopscotchBubble;
+  var HopscotchCalloutManager;
+  var HopscotchI18N;
+  var customI18N;
+  var customRenderer;
+  var templateToUse = 'bubble_default';
+  var Sizzle = window.Sizzle || null;
+  var utils;
+  var callbacks;
+  var helpers;
+  var winLoadHandler;
+  var defaultOpts;
+  var winHopscotch;
+  var undefinedStr = 'undefined';
+  var waitingToStart = false;
+  var hasJquery = (typeof jQuery === 'undefined' ? 'undefined' : _typeof(jQuery)) !== undefinedStr;
+  var hasSessionStorage = false;
+  var isStorageWritable = false;
+  var validIdRegEx = /^[a-zA-Z]+[a-zA-Z0-9_-]*$/;
+  var rtlMatches = {
     left: 'right',
     right: 'left'
   };
@@ -118,7 +233,7 @@
      * @private
      */
     addClass: function addClass(domEl, classToAdd) {
-      var domClasses, classToAddArr, i, len;
+      var domClasses, classToAddArr, setClass, i, len;
 
       if (!domEl.className) {
         domEl.className = classToAdd;
@@ -142,7 +257,7 @@
      * @private
      */
     removeClass: function removeClass(domEl, classToRemove) {
-      var domClasses, classToRemoveArr, i, len;
+      var domClasses, classToRemoveArr, currClass, i, len;
 
       classToRemoveArr = classToRemove.split(/\s+/);
       domClasses = ' ' + domEl.className + ' ';
@@ -256,6 +371,8 @@
      */
     invokeEventCallbacks: function invokeEventCallbacks(evtType, stepCb) {
       var cbArr = callbacks[evtType],
+          callback,
+          fn,
           i,
           len;
 
@@ -1056,6 +1173,10 @@
           // for updating after window resize
       onWinResize,
           _appendToBody2,
+          children,
+          numChildren,
+          node,
+          i,
           currTour,
           opt;
 
@@ -1426,6 +1547,7 @@
           yuiEase,
           direction,
           scrollIncr,
+          scrollTimeout,
           _scrollTimeoutFn;
 
       // Target and bubble are both visible in viewport
@@ -2246,6 +2368,7 @@
       var bubble,
           events = ['next', 'prev', 'start', 'end', 'show', 'error', 'close'],
           eventPropName,
+          callbackProp,
           i,
           len;
 
