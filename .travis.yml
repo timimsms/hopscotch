@@ -4,6 +4,7 @@ node_js:
   - "6"
 notifications:
   email:
-    - tlindvall@linkedin.com
+    - tim@mims.ms
 before_install:
   - npm install -g grunt-cli
+  - npm install -g rollup
